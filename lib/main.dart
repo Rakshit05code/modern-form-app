@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF6366F1),
           brightness: Brightness.dark,
         ),
-        fontFamily: 'SF Pro Display',
       ),
       home: const FormPage(),
       debugShowCheckedModeBanner: false,
@@ -244,9 +243,6 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                               if (value.trim().length < 2) {
                                 return 'Name must be at least 2 characters';
                               }
-                              if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value.trim())) {
-                                return 'Name can only contain letters and spaces';
-                              }
                               return null;
                             },
                           ),
@@ -277,9 +273,6 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Please enter your phone number';
-                              }
-                              if (!RegExp(r'^[0-9+\-\s()]{10,20}$').hasMatch(value.trim())) {
-                                return 'Please enter a valid phone number';
                               }
                               return null;
                             },
@@ -459,10 +452,10 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                                 MaterialPageRoute(builder: (context) => const SubmissionsPage()),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'View All Submissions',
                               style: TextStyle(
-                                color: const Color(0xFF6366F1),
+                                color: Color(0xFF6366F1),
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
