@@ -1,0 +1,78 @@
+name: Simple Flutter Build
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.6'
+        channel: 'stable'
+        cache: true
+    
+    - name: Check Flutter installation
+      run: |
+        flutter --version
+        flutter doctor -v
+    
+    - name: Create Flutter project structure
+      run: |
+        echo "Creating temporary Flutter project..."
+        flutter create --project-name modern_form_app temp_project
+        echo "Copying Android files..."
+        cp -r temp_project/android ./
+        echo "Cleaning up..."
+        rm -rf temp_project
+        echo "Android structure created successfully!"
+    
+    - name: Verify Android structure
+      run: |
+        echo "Checking Android files:"
+        ls -la android/
+        ls -la android/app/
+    
+    - name: Get Flutter dependencies
+      run: flutter pub get
+    
+    - name: Analyze code (optional)
+      run: flutter analyze
+      continue-on-error: true
+    
+    - name: Build APK
+      run: flutter build apk --release --verbose
+    
+    - name: List build outputs
+      run: |
+        echo "Build completed! Checking outputs:"
+        ls -la build/app/outputs/flutter-apk/
+    
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+    
+    - name: Upload Debug APK (if exists)
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug-apk
+        path: build/app/outputs/flutter-apk/app-debug.apk
+        retention-days: 7
+      continue-on-error: true
